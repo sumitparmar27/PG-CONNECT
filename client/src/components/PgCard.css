@@ -1,0 +1,141 @@
+.pg-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s;
+}
+
+.pg-card:hover {
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow);
+}
+
+.pg-card__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--code-bg);
+}
+
+.pg-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pg-card__media-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  opacity: 0.5;
+}
+
+.pg-card__status {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 9px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.status-badge--ok {
+  color: #1e6b3a;
+  background: #eaf6ee;
+}
+
+.status-badge--off {
+  color: #9a2f14;
+  background: #fdeeea;
+}
+
+.status-badge--pending {
+  color: #8a6200;
+  background: #fdf3d9;
+}
+
+.pg-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 16px;
+  text-align: left;
+}
+
+.pg-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pg-card__top h3 {
+  margin: 0;
+  font-family: var(--heading);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.pg-card__type {
+  flex-shrink: 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent-blue);
+  background: var(--accent-blue-bg);
+  padding: 3px 8px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.pg-card__location {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.pg-card__meta {
+  display: flex;
+  gap: 14px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.pg-card__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pg-card__price {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.pg-card__price b {
+  font-size: 17px;
+  color: var(--text-h);
+}

@@ -1,0 +1,32 @@
+.my-bookings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.my-bookings h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.my-bookings__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.my-booking-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.my-booking-row__amount {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-h);
+  flex-shrink: 0;
+}

@@ -30,7 +30,7 @@ async function createPg(ownerId, data, files) {
 }
 
 async function listPgs({ area, type, minPrice, maxPrice, page, limit }) {
-  const filter = {};
+  const filter = { moderationStatus: "approved" };
   if (area) filter.area = area;
   if (type) filter.type = type;
   if (minPrice !== undefined || maxPrice !== undefined) {
@@ -89,7 +89,8 @@ async function updatePg(id, ownerId, data, files) {
 
   const { images, video } = toMediaPaths(files);
 
-  Object.assign(pg, data);
+  const { moderationStatus, ...safeData } = data;
+  Object.assign(pg, safeData);
   if (images.length > 0) pg.images = images;
   if (video) pg.video = video;
 
@@ -102,6 +103,36 @@ async function deletePg(id, ownerId) {
   await pg.deleteOne();
 }
 
+async function listForModeration({ status, page, limit }) {
+  const filter = {};
+  if (status) filter.moderationStatus = status;
+
+  const pageNum = Math.max(1, page || 1);
+  const perPage = Math.min(24, limit || 10);
+
+  const [items, total] = await Promise.all([
+    Pg.find(filter)
+      .populate("type", PUBLIC_TYPE_FIELDS)
+      .populate("owner", PUBLIC_OWNER_FIELDS)
+      .sort({ createdAt: -1 })
+      .skip((pageNum - 1) * perPage)
+      .limit(perPage),
+    Pg.countDocuments(filter),
+  ]);
+
+  return { items, total, page: pageNum, pages: Math.max(1, Math.ceil(total / perPage)) };
+}
+
+async function setModerationStatus(id, status) {
+  const pg = await Pg.findById(id);
+  if (!pg) {
+    throw new ApiError(404, "PG not found");
+  }
+  pg.moderationStatus = status;
+  await pg.save();
+  return pg;
+}
+
 module.exports = {
   createPg,
   listPgs,
@@ -110,4 +141,6 @@ module.exports = {
   listMyPgs,
   updatePg,
   deletePg,
+  listForModeration,
+  setModerationStatus,
 };

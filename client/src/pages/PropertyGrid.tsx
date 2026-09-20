@@ -4,8 +4,9 @@ import { isAxiosError } from 'axios'
 import { listAreasRequest, listPgTypesRequest, listPgsRequest } from '../api/pg.api'
 import type { Pg, PgType } from '../types/pg'
 import { PgCard } from '../components/PgCard'
-import { ChevronLeftIcon, ChevronRightIcon, SearchIcon } from '../components/icons'
-import './PropertyGrid.css'
+import { Pagination } from '../components/Pagination'
+import { SearchIcon } from '../components/icons'
+import { gridErrorClass } from '../lib/ui'
 
 const PRICE_RANGES = [
   { label: 'Any price', min: undefined, max: undefined },
@@ -72,17 +73,22 @@ export function PropertyGrid() {
     setSearchParams(next)
   }
 
+  const selectClass =
+    'rounded-sm border-[1.5px] border-border bg-bg px-2.5 py-[9px] text-sm text-text-h focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent-bg'
+
   return (
-    <div className="grid-page">
-      <div className="grid-page__head">
-        <h1>Find your next PG</h1>
-        <p>{result.total} verified listing{result.total === 1 ? '' : 's'} to browse</p>
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="mb-1 text-[30px]">Find your next PG</h1>
+        <p className="text-[14.5px] text-text">
+          {result.total} verified listing{result.total === 1 ? '' : 's'} to browse
+        </p>
       </div>
 
-      <div className="grid-filters">
-        <label className="grid-filter">
-          <span>Area</span>
-          <select value={area} onChange={(e) => updateFilter('area', e.target.value)}>
+      <div className="flex flex-wrap gap-3.5 rounded border border-border bg-code-bg p-4">
+        <label className="flex min-w-[180px] flex-col gap-[5px]">
+          <span className="text-xs font-semibold tracking-[0.04em] text-text uppercase">Area</span>
+          <select className={selectClass} value={area} onChange={(e) => updateFilter('area', e.target.value)}>
             <option value="">All areas</option>
             {areas.map((a) => (
               <option key={a} value={a}>
@@ -92,9 +98,9 @@ export function PropertyGrid() {
           </select>
         </label>
 
-        <label className="grid-filter">
-          <span>PG type</span>
-          <select value={type} onChange={(e) => updateFilter('type', e.target.value)}>
+        <label className="flex min-w-[180px] flex-col gap-[5px]">
+          <span className="text-xs font-semibold tracking-[0.04em] text-text uppercase">PG type</span>
+          <select className={selectClass} value={type} onChange={(e) => updateFilter('type', e.target.value)}>
             <option value="">All types</option>
             {types.map((t) => (
               <option key={t._id} value={t._id}>
@@ -104,9 +110,9 @@ export function PropertyGrid() {
           </select>
         </label>
 
-        <label className="grid-filter">
-          <span>Price</span>
-          <select value={priceIndex} onChange={(e) => updateFilter('priceIndex', e.target.value)}>
+        <label className="flex min-w-[180px] flex-col gap-[5px]">
+          <span className="text-xs font-semibold tracking-[0.04em] text-text uppercase">Price</span>
+          <select className={selectClass} value={priceIndex} onChange={(e) => updateFilter('priceIndex', e.target.value)}>
             {PRICE_RANGES.map((r, i) => (
               <option key={r.label} value={i}>
                 {r.label}
@@ -116,34 +122,27 @@ export function PropertyGrid() {
         </label>
       </div>
 
-      {error && <p className="grid-error">{error}</p>}
+      {error && <p className={gridErrorClass}>{error}</p>}
 
       {!loading && !error && result.items.length === 0 && (
-        <div className="grid-empty">
+        <div className="flex flex-col items-center gap-2.5 px-5 py-16 text-center text-text">
           <SearchIcon width={28} height={28} />
           <p>No PGs match those filters yet. Try widening your search.</p>
         </div>
       )}
 
-      <div className="grid-cards">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-5">
         {loading
-          ? Array.from({ length: 6 }).map((_, i) => <div key={i} className="pg-card-skeleton" />)
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="aspect-[4/3.7] animate-shimmer rounded bg-[linear-gradient(100deg,var(--code-bg)_30%,var(--border)_50%,var(--code-bg)_70%)] bg-[length:200%_100%] motion-reduce:animate-none"
+              />
+            ))
           : result.items.map((pg) => <PgCard key={pg._id} pg={pg} />)}
       </div>
 
-      {!loading && result.pages > 1 && (
-        <div className="grid-pagination">
-          <button type="button" disabled={page <= 1} onClick={() => goToPage(page - 1)}>
-            <ChevronLeftIcon width={16} height={16} />
-          </button>
-          <span>
-            Page {result.page} of {result.pages}
-          </span>
-          <button type="button" disabled={page >= result.pages} onClick={() => goToPage(page + 1)}>
-            <ChevronRightIcon width={16} height={16} />
-          </button>
-        </div>
-      )}
+      {!loading && result.pages > 1 && <Pagination page={page} pages={result.pages} onChange={goToPage} />}
     </div>
   )
 }

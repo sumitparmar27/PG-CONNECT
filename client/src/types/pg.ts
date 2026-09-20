@@ -10,6 +10,7 @@ export interface PgOwner {
 }
 
 export type PgStatus = 'available' | 'not available'
+export type ModerationStatus = 'pending' | 'approved' | 'rejected'
 
 export interface Pg {
   _id: string
@@ -22,6 +23,7 @@ export interface Pg {
   pincode: string
   price: number
   status: PgStatus
+  moderationStatus: ModerationStatus
   description: string
   rooms: number
   bed: number
@@ -50,6 +52,18 @@ export interface PgFilters {
   minPrice?: number
   maxPrice?: number
   page?: number
+}
+
+export interface AdminListingFilters {
+  status?: ModerationStatus
+  page?: number
+}
+
+export interface AdminListingListResponse {
+  items: Pg[]
+  total: number
+  page: number
+  pages: number
 }
 
 export interface PgFormValues {

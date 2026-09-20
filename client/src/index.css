@@ -5,18 +5,35 @@
   --text-h: #031a26;
   --bg: #fff;
   --border: #dde6ec;
-  --code-bg: #f1faff;
-  --accent: #f15a29;
-  --accent-bg: rgba(241, 90, 41, 0.1);
-  --accent-border: rgba(241, 90, 41, 0.5);
+  --code-bg: #c8ddee;
+  --accent: #0f5a8c;
+  --accent-bg: rgba(15, 90, 140, 0.1);
+  --accent-border: rgba(15, 90, 140, 0.5);
   --accent-blue: #0072e0;
   --accent-blue-bg: rgba(0, 114, 224, 0.1);
   --accent-blue-border: rgba(0, 114, 224, 0.5);
   --highlight: #ffe900;
   --highlight-ink: #4a3b00;
   --social-bg: rgba(241, 250, 255, 0.6);
+  --color-success: #1e6b3a;
+  --color-success-bg: #eaf6ee;
+  --color-warning: #8a6200;
+  --color-warning-bg: #fdf3d9;
+  --color-danger: #9a2f14;
+  --color-danger-bg: #fdeeea;
+  --color-info: var(--accent-blue);
+  --color-info-bg: var(--accent-blue-bg);
   --shadow:
     rgba(3, 26, 38, 0.1) 0 10px 15px -3px, rgba(3, 26, 38, 0.05) 0 4px 6px -2px;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -24,7 +41,7 @@
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  color-scheme: light;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -37,28 +54,61 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9db0bd;
-    --text-h: #eaf3f8;
-    --bg: #0b161d;
-    --border: #22323c;
-    --code-bg: #101f28;
-    --accent: #ff7a45;
-    --accent-bg: rgba(255, 122, 69, 0.15);
-    --accent-border: rgba(255, 122, 69, 0.5);
-    --accent-blue: #4da3ff;
-    --accent-blue-bg: rgba(77, 163, 255, 0.15);
-    --accent-blue-border: rgba(77, 163, 255, 0.5);
-    --highlight: #ffe900;
-    --highlight-ink: #2a2200;
-    --social-bg: rgba(34, 50, 60, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+/* Bridges the existing design tokens above into Tailwind's theme (as `inline`
+   so utilities keep resolving the live :root values, not build-time snapshots)
+   so new components can use Tailwind utility classes without a second token
+   system. Existing hand-written CSS files are unaffected. */
+@theme inline {
+  --color-text: var(--text);
+  --color-text-h: var(--text-h);
+  --color-bg: var(--bg);
+  --color-border: var(--border);
+  --color-code-bg: var(--code-bg);
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  --color-accent: var(--accent);
+  --color-accent-bg: var(--accent-bg);
+  --color-accent-border: var(--accent-border);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-blue-bg: var(--accent-blue-bg);
+  --color-accent-blue-border: var(--accent-blue-border);
+
+  --color-highlight: var(--highlight);
+  --color-highlight-ink: var(--highlight-ink);
+  --color-social-bg: var(--social-bg);
+
+  --color-success: var(--color-success);
+  --color-success-bg: var(--color-success-bg);
+  --color-warning: var(--color-warning);
+  --color-warning-bg: var(--color-warning-bg);
+  --color-danger: var(--color-danger);
+  --color-danger-bg: var(--color-danger-bg);
+  --color-info: var(--color-info);
+  --color-info-bg: var(--color-info-bg);
+
+  --radius: var(--radius);
+  --radius-sm: var(--radius-sm);
+  --shadow-card: var(--shadow);
+
+  --font-sans: var(--sans);
+  --font-heading: var(--heading);
+  --font-mono: var(--mono);
+
+  --animate-auth-spin: auth-spin 0.7s linear infinite;
+  --animate-shimmer: shimmer 1.3s infinite;
+}
+
+@keyframes auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
   }
 }
 
@@ -67,11 +117,7 @@ body {
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
+  width: 100%;
   min-height: 100svh;
   display: flex;
   flex-direction: column;

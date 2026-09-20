@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { isAxiosError } from 'axios'
 import { listOwnerBookingsRequest } from '../../api/booking.api'
 import type { Booking, OwnerEarningsSummary } from '../../types/booking'
-import './OwnerEarnings.css'
+import { cn } from '../../lib/utils'
+import { gridErrorClass, statusBadgeClass, tableClass, tableWrapClass, tdClass, thClass } from '../../lib/ui'
 
 function money(value: number) {
   return `₹${value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`
@@ -25,51 +26,54 @@ export function OwnerEarnings() {
       })
   }, [])
 
-  return (
-    <div className="earnings-page">
-      <h1>Earnings</h1>
-      <p className="earnings-page__sub">The platform keeps a 5% fee on every paid booking; the rest is owed to you.</p>
+  const tileClass = 'flex flex-col gap-1.5 rounded border border-border bg-bg px-[18px] py-4'
+  const tileLabelClass = 'text-xs uppercase tracking-[0.04em] text-text'
 
-      {error && <p className="grid-error">{error}</p>}
+  return (
+    <div className="flex flex-col gap-5">
+      <h1 className="mb-0.5 text-[26px]">Earnings</h1>
+      <p className="m-0 text-sm text-text">The platform keeps a 5% fee on every paid booking; the rest is owed to you.</p>
+
+      {error && <p className={gridErrorClass}>{error}</p>}
 
       {summary && (
-        <div className="earnings-tiles">
-          <div className="earnings-tile">
-            <span>Gross rent collected</span>
-            <b>{money(summary.totalGross)}</b>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3.5">
+          <div className={tileClass}>
+            <span className={tileLabelClass}>Gross rent collected</span>
+            <b className="text-[22px] text-text-h [font-variant-numeric:tabular-nums]">{money(summary.totalGross)}</b>
           </div>
-          <div className="earnings-tile">
-            <span>Platform fee (5%)</span>
-            <b>{money(summary.totalPlatformFee)}</b>
+          <div className={tileClass}>
+            <span className={tileLabelClass}>Platform fee (5%)</span>
+            <b className="text-[22px] text-text-h [font-variant-numeric:tabular-nums]">{money(summary.totalPlatformFee)}</b>
           </div>
-          <div className="earnings-tile earnings-tile--accent">
-            <span>Your payout</span>
-            <b>{money(summary.totalOwnerPayout)}</b>
+          <div className={cn(tileClass, 'border-accent-border bg-accent-bg')}>
+            <span className={tileLabelClass}>Your payout</span>
+            <b className="text-[22px] text-accent [font-variant-numeric:tabular-nums]">{money(summary.totalOwnerPayout)}</b>
           </div>
-          <div className="earnings-tile">
-            <span>Pending settlement</span>
-            <b>{money(summary.pendingPayout)}</b>
+          <div className={tileClass}>
+            <span className={tileLabelClass}>Pending settlement</span>
+            <b className="text-[22px] text-text-h [font-variant-numeric:tabular-nums]">{money(summary.pendingPayout)}</b>
           </div>
-          <div className="earnings-tile">
-            <span>Already settled</span>
-            <b>{money(summary.settledPayout)}</b>
+          <div className={tileClass}>
+            <span className={tileLabelClass}>Already settled</span>
+            <b className="text-[22px] text-text-h [font-variant-numeric:tabular-nums]">{money(summary.settledPayout)}</b>
           </div>
         </div>
       )}
 
-      {summary && bookings.length === 0 && !error && <p className="earnings-page__empty">No paid bookings yet.</p>}
+      {summary && bookings.length === 0 && !error && <p className="py-6 text-text">No paid bookings yet.</p>}
 
       {bookings.length > 0 && (
-        <div className="table-wrap">
-          <table className="earnings-table">
+        <div className={tableWrapClass}>
+          <table className={tableClass}>
             <thead>
               <tr>
-                <th>Property</th>
-                <th>Tenant</th>
-                <th>Rent</th>
-                <th>Platform fee</th>
-                <th>Your payout</th>
-                <th>Payout status</th>
+                <th className={thClass}>Property</th>
+                <th className={thClass}>Tenant</th>
+                <th className={thClass}>Rent</th>
+                <th className={thClass}>Platform fee</th>
+                <th className={thClass}>Your payout</th>
+                <th className={thClass}>Payout status</th>
               </tr>
             </thead>
             <tbody>
@@ -77,15 +81,15 @@ export function OwnerEarnings() {
                 const tenant = typeof booking.tenant === 'string' ? null : booking.tenant
                 return (
                   <tr key={booking._id}>
-                    <td>{booking.pg.name}</td>
-                    <td>{tenant?.name || '—'}</td>
-                    <td>{money(booking.amount)}</td>
-                    <td>{money(booking.platformFeeAmount)}</td>
-                    <td>
+                    <td className={tdClass}>{booking.pg.name}</td>
+                    <td className={tdClass}>{tenant?.name || '—'}</td>
+                    <td className={tdClass}>{money(booking.amount)}</td>
+                    <td className={tdClass}>{money(booking.platformFeeAmount)}</td>
+                    <td className={tdClass}>
                       <b>{money(booking.ownerPayoutAmount)}</b>
                     </td>
-                    <td>
-                      <span className={`status-badge status-badge--${booking.payoutStatus === 'settled' ? 'ok' : 'pending'}`}>
+                    <td className={tdClass}>
+                      <span className={statusBadgeClass(booking.payoutStatus === 'settled' ? 'ok' : 'pending')}>
                         {booking.payoutStatus === 'settled' ? 'Settled' : 'Pending'}
                       </span>
                     </td>

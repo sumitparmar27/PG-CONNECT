@@ -12,6 +12,17 @@ import {
   SpinnerIcon,
   UserIcon,
 } from '../components/icons'
+import { cn } from '../lib/utils'
+import {
+  authAlertClass,
+  authFieldClass,
+  authFieldLabelClass,
+  authInputClass,
+  authInputIconClass,
+  authInputToggleClass,
+  authInputWrapClass,
+  authSubmitClass,
+} from '../lib/ui'
 
 export function Register() {
   const { register } = useAuth()
@@ -38,13 +49,16 @@ export function Register() {
 
   return (
     <AuthLayout title="Create your account" subtitle="Sign up to start finding your PG.">
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <div className="field">
-          <label htmlFor="register-name">Full name</label>
-          <div className="input-wrap">
-            <UserIcon />
+      <form className="flex flex-col gap-[18px]" onSubmit={handleSubmit}>
+        <div className={authFieldClass}>
+          <label htmlFor="register-name" className={authFieldLabelClass}>
+            Full name
+          </label>
+          <div className={authInputWrapClass}>
+            <UserIcon className={authInputIconClass} />
             <input
               id="register-name"
+              className={authInputClass}
               type="text"
               placeholder="Jane Doe"
               autoComplete="name"
@@ -55,12 +69,15 @@ export function Register() {
           </div>
         </div>
 
-        <div className="field">
-          <label htmlFor="register-email">Email</label>
-          <div className="input-wrap">
-            <MailIcon />
+        <div className={authFieldClass}>
+          <label htmlFor="register-email" className={authFieldLabelClass}>
+            Email
+          </label>
+          <div className={authInputWrapClass}>
+            <MailIcon className={authInputIconClass} />
             <input
               id="register-email"
+              className={authInputClass}
               type="email"
               placeholder="you@example.com"
               autoComplete="email"
@@ -71,12 +88,15 @@ export function Register() {
           </div>
         </div>
 
-        <div className="field">
-          <label htmlFor="register-password">Password</label>
-          <div className="input-wrap">
-            <LockIcon />
+        <div className={authFieldClass}>
+          <label htmlFor="register-password" className={authFieldLabelClass}>
+            Password
+          </label>
+          <div className={authInputWrapClass}>
+            <LockIcon className={authInputIconClass} />
             <input
               id="register-password"
+              className={cn(authInputClass, 'pr-[42px]')}
               type={showPassword ? 'text' : 'password'}
               placeholder="Create a password"
               autoComplete="new-password"
@@ -86,7 +106,7 @@ export function Register() {
             />
             <button
               type="button"
-              className="input-toggle"
+              className={authInputToggleClass}
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
@@ -96,19 +116,22 @@ export function Register() {
         </div>
 
         {error && (
-          <p className="auth-alert" role="alert">
+          <p className={authAlertClass} role="alert">
             <AlertIcon />
             {error}
           </p>
         )}
 
-        <button className="auth-submit" type="submit" disabled={submitting}>
+        <button className={authSubmitClass} type="submit" disabled={submitting}>
           {submitting && <SpinnerIcon />}
           {submitting ? 'Creating account...' : 'Create account'}
         </button>
       </form>
-      <p className="auth-card__footer">
-        Already have an account? <Link to="/login">Log in</Link>
+      <p className="mt-7 text-center text-sm text-text">
+        Already have an account?{' '}
+        <Link to="/login" className="font-semibold text-accent no-underline hover:underline">
+          Log in
+        </Link>
       </p>
     </AuthLayout>
   )

@@ -74,7 +74,7 @@ export function AlertIcon(props: SVGProps<SVGSVGElement>) {
 
 export function SpinnerIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg {...base(props)} className="icon-spin">
+    <svg {...base(props)} className="animate-auth-spin">
       <path d="M12 3a9 9 0 1 0 9 9" />
     </svg>
   )
@@ -206,6 +206,86 @@ export function LogoutIcon(props: SVGProps<SVGSVGElement>) {
     <svg {...base(props)}>
       <path d="M14 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2" />
       <path d="M9 12h11.5M17 8.5l3.5 3.5-3.5 3.5" />
+    </svg>
+  )
+}
+
+export function DashboardIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <rect x="3.5" y="3.5" width="7.5" height="7.5" rx="1.5" />
+      <rect x="13" y="3.5" width="7.5" height="7.5" rx="1.5" />
+      <rect x="3.5" y="13" width="7.5" height="7.5" rx="1.5" />
+      <rect x="13" y="13" width="7.5" height="7.5" rx="1.5" />
+    </svg>
+  )
+}
+
+export function UsersIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <circle cx="9" cy="8" r="3" />
+      <path d="M3 20c1.2-3.3 3.7-5 6-5s4.8 1.7 6 5" />
+      <path d="M15.5 6a2.75 2.75 0 0 1 0 5.4" />
+      <path d="M17.5 14.5c2 .4 3.4 1.9 4.3 4.5" />
+    </svg>
+  )
+}
+
+export function BuildingIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <rect x="5" y="3" width="14" height="18" rx="1.5" />
+      <path d="M9 7.5h1.5M13.5 7.5H15M9 11.5h1.5M13.5 11.5H15M9 15.5h1.5M13.5 15.5H15" />
+      <path d="M10.5 21v-3h3v3" />
+    </svg>
+  )
+}
+
+export function CalendarIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+      <path d="M3.5 9.5h17" />
+      <path d="M8 3v3.5M16 3v3.5" />
+    </svg>
+  )
+}
+
+export function ChartIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <path d="M4.5 20V10" />
+      <path d="M12 20V4" />
+      <path d="M19.5 20v-7" />
+      <path d="M3.5 20.5h17" />
+    </svg>
+  )
+}
+
+export function GearIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 3v2.2M12 18.8V21M21 12h-2.2M5.2 12H3M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6" />
+    </svg>
+  )
+}
+
+export function BanIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="m6.5 6.5 11 11" />
+    </svg>
+  )
+}
+
+export function XCircleIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="m9 9 6 6M15 9l-6 6" />
     </svg>
   )
 }

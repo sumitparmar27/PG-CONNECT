@@ -11,11 +11,13 @@
     "start": "node server.js",
     "lint": "oxlint -c client/.oxlintrc.json client/src",
     "types": "tsc --noEmit -p client/tsconfig.json",
-    "seed:pg-types": "node scripts/seedPgTypes.js"
+    "seed:pg-types": "node scripts/seedPgTypes.js",
+    "migrate:pg-moderation": "node scripts/backfillPgModeration.js"
   },
   "dependencies": {
     "axios": "^1.18.1",
     "bcryptjs": "^3.0.3",
+    "clsx": "^2.1.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
@@ -26,7 +28,8 @@
     "razorpay": "^2.9.8",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-router-dom": "^7.18.1"
+    "react-router-dom": "^7.18.1",
+    "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

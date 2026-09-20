@@ -6,7 +6,13 @@ import type { PgFormValues, PgType } from '../../types/pg'
 import { FACILITIES } from '../../constants/facilities'
 import { useAuth } from '../../hooks/useAuth'
 import { AlertIcon, SpinnerIcon } from '../../components/icons'
-import './PgForm.css'
+import { authAlertClass, authSubmitClass } from '../../lib/ui'
+import { cn } from '../../lib/utils'
+
+const rowClass = 'flex gap-3.5 max-[620px]:flex-col'
+const labelClass = 'flex flex-1 flex-col gap-1.5 text-[13px] font-semibold text-text-h'
+const inputClass =
+  'rounded-sm border-[1.5px] border-border bg-code-bg px-3 py-2.5 text-[14.5px] font-normal text-text-h focus:border-accent focus:bg-bg focus:ring-3 focus:ring-accent-bg focus:outline-none'
 
 const EMPTY_FORM: PgFormValues = {
   name: '',
@@ -146,23 +152,23 @@ export function PgForm() {
     }
   }
 
-  if (loading) return <p className="details-state">Loading...</p>
+  if (loading) return <p className="py-20 text-center text-text">Loading...</p>
 
   return (
-    <div className="pg-form-page">
-      <h1>{isEdit ? 'Edit property' : 'List a new property'}</h1>
+    <div className="max-w-[760px]">
+      <h1 className="mb-5 text-[26px]">{isEdit ? 'Edit property' : 'List a new property'}</h1>
 
-      <form className="pg-form" onSubmit={handleSubmit}>
-        <fieldset>
-          <legend>Basics</legend>
-          <div className="pg-form__row">
-            <label>
+      <form className="flex flex-col gap-[22px]" onSubmit={handleSubmit}>
+        <fieldset className="flex flex-col gap-3.5 rounded border border-border pt-[18px] px-5 pb-5">
+          <legend className="px-1.5 text-[13px] font-bold tracking-[0.05em] text-text uppercase">Basics</legend>
+          <div className={rowClass}>
+            <label className={labelClass}>
               <span>Property name</span>
-              <input value={form.name} onChange={(e) => setField('name', e.target.value)} required />
+              <input className={inputClass} value={form.name} onChange={(e) => setField('name', e.target.value)} required />
             </label>
-            <label>
+            <label className={labelClass}>
               <span>PG type</span>
-              <select value={form.type} onChange={(e) => setField('type', e.target.value)} required>
+              <select className={inputClass} value={form.type} onChange={(e) => setField('type', e.target.value)} required>
                 <option value="">Select a type</option>
                 {types.map((t) => (
                   <option key={t._id} value={t._id}>
@@ -172,26 +178,32 @@ export function PgForm() {
               </select>
             </label>
           </div>
-          <div className="pg-form__row">
-            <label>
+          <div className={rowClass}>
+            <label className={labelClass}>
               <span>Sharing (optional)</span>
               <input
+                className={inputClass}
                 value={form.sharing}
                 onChange={(e) => setField('sharing', e.target.value)}
                 placeholder="e.g. 2 sharing"
               />
             </label>
-            <label>
+            <label className={labelClass}>
               <span>Status</span>
-              <select value={form.status} onChange={(e) => setField('status', e.target.value as PgFormValues['status'])}>
+              <select
+                className={inputClass}
+                value={form.status}
+                onChange={(e) => setField('status', e.target.value as PgFormValues['status'])}
+              >
                 <option value="available">Available</option>
                 <option value="not available">Not available</option>
               </select>
             </label>
           </div>
-          <label>
+          <label className={labelClass}>
             <span>Description</span>
             <textarea
+              className={cn(inputClass, 'resize-y [font-family:inherit]')}
               rows={4}
               value={form.description}
               onChange={(e) => setField('description', e.target.value)}
@@ -200,36 +212,37 @@ export function PgForm() {
           </label>
         </fieldset>
 
-        <fieldset>
-          <legend>Location</legend>
-          <div className="pg-form__row">
-            <label>
+        <fieldset className="flex flex-col gap-3.5 rounded border border-border pt-[18px] px-5 pb-5">
+          <legend className="px-1.5 text-[13px] font-bold tracking-[0.05em] text-text uppercase">Location</legend>
+          <div className={rowClass}>
+            <label className={labelClass}>
               <span>Area / locality</span>
-              <input value={form.area} onChange={(e) => setField('area', e.target.value)} required />
+              <input className={inputClass} value={form.area} onChange={(e) => setField('area', e.target.value)} required />
             </label>
-            <label>
+            <label className={labelClass}>
               <span>Landmark (optional)</span>
-              <input value={form.landmark} onChange={(e) => setField('landmark', e.target.value)} />
+              <input className={inputClass} value={form.landmark} onChange={(e) => setField('landmark', e.target.value)} />
             </label>
           </div>
-          <div className="pg-form__row">
-            <label className="pg-form__grow">
+          <div className={rowClass}>
+            <label className={cn(labelClass, 'flex-[2]')}>
               <span>Full address</span>
-              <input value={form.address} onChange={(e) => setField('address', e.target.value)} required />
+              <input className={inputClass} value={form.address} onChange={(e) => setField('address', e.target.value)} required />
             </label>
-            <label>
+            <label className={labelClass}>
               <span>Pincode</span>
-              <input value={form.pincode} onChange={(e) => setField('pincode', e.target.value)} required />
+              <input className={inputClass} value={form.pincode} onChange={(e) => setField('pincode', e.target.value)} required />
             </label>
           </div>
         </fieldset>
 
-        <fieldset>
-          <legend>Capacity &amp; pricing</legend>
-          <div className="pg-form__row pg-form__row--wrap">
-            <label>
+        <fieldset className="flex flex-col gap-3.5 rounded border border-border pt-[18px] px-5 pb-5">
+          <legend className="px-1.5 text-[13px] font-bold tracking-[0.05em] text-text uppercase">Capacity &amp; pricing</legend>
+          <div className={cn(rowClass, 'flex-wrap')}>
+            <label className={labelClass}>
               <span>Rent (₹ / month)</span>
               <input
+                className={inputClass}
                 type="number"
                 min={0}
                 value={form.price}
@@ -238,9 +251,10 @@ export function PgForm() {
               />
             </label>
             {NUMBER_FIELDS.map((key) => (
-              <label key={key} className="pg-form__number">
+              <label key={key} className={cn(labelClass, 'min-w-[90px]')}>
                 <span style={{ textTransform: 'capitalize' }}>{key}</span>
                 <input
+                  className={inputClass}
                   type="number"
                   min={0}
                   value={form[key]}
@@ -252,12 +266,13 @@ export function PgForm() {
           </div>
         </fieldset>
 
-        <fieldset>
-          <legend>Facilities</legend>
-          <div className="pg-form__facilities">
+        <fieldset className="flex flex-col gap-3.5 rounded border border-border pt-[18px] px-5 pb-5">
+          <legend className="px-1.5 text-[13px] font-bold tracking-[0.05em] text-text uppercase">Facilities</legend>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2.5">
             {FACILITIES.map((facility) => (
-              <label key={facility} className="pg-form__checkbox">
+              <label key={facility} className={cn(labelClass, 'flex-row items-center gap-2 font-medium cursor-pointer')}>
                 <input
+                  className="size-4 p-0 accent-accent"
                   type="checkbox"
                   checked={form.facilities.includes(facility)}
                   onChange={() => toggleFacility(facility)}
@@ -268,24 +283,27 @@ export function PgForm() {
           </div>
         </fieldset>
 
-        <fieldset>
-          <legend>Photos &amp; video</legend>
+        <fieldset className="flex flex-col gap-3.5 rounded border border-border pt-[18px] px-5 pb-5">
+          <legend className="px-1.5 text-[13px] font-bold tracking-[0.05em] text-text uppercase">Photos &amp; video</legend>
           {existingImages.length > 0 && (
-            <div className="pg-form__existing">
+            <div className="flex flex-wrap items-center gap-2">
               {existingImages.map((src) => (
-                <img key={src} src={src} alt="" />
+                <img key={src} src={src} alt="" className="h-14 w-[72px] rounded-sm border border-border object-cover" />
               ))}
-              <p>Uploading new photos below will replace all of these.</p>
+              <p className="mt-1 w-full text-[12.5px] font-normal text-text">Uploading new photos below will replace all of these.</p>
             </div>
           )}
-          <label>
+          <label className={labelClass}>
             <span>Photos (1–6, JPEG/PNG/WebP)</span>
-            <input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={handleImageChange} />
+            <input className={inputClass} type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={handleImageChange} />
           </label>
-          {existingVideo && !videoFile && <p className="pg-form__hint">Current video will be kept unless you upload a new one.</p>}
-          <label>
+          {existingVideo && !videoFile && (
+            <p className="-mt-1 text-[12.5px] font-normal text-text">Current video will be kept unless you upload a new one.</p>
+          )}
+          <label className={labelClass}>
             <span>Walkthrough video (optional)</span>
             <input
+              className={inputClass}
               type="file"
               accept="video/mp4,video/webm,video/quicktime"
               onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
@@ -294,13 +312,13 @@ export function PgForm() {
         </fieldset>
 
         {error && (
-          <p className="auth-alert" role="alert">
+          <p className={authAlertClass} role="alert">
             <AlertIcon />
             {error}
           </p>
         )}
 
-        <button className="auth-submit" type="submit" disabled={submitting}>
+        <button className={authSubmitClass} type="submit" disabled={submitting}>
           {submitting && <SpinnerIcon />}
           {submitting ? 'Saving...' : isEdit ? 'Save changes' : 'List property'}
         </button>

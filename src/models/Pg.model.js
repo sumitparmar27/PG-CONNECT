@@ -12,6 +12,7 @@ const pgSchema = new mongoose.Schema(
     pincode: { type: String, required: true, trim: true },
     price: { type: Number, required: true, min: 0 },
     status: { type: String, enum: ["available", "not available"], default: "available" },
+    moderationStatus: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
     description: { type: String, required: true },
     rooms: { type: Number, required: true, min: 0 },
     bed: { type: Number, required: true, min: 0 },

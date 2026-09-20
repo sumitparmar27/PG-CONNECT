@@ -22,6 +22,9 @@ const requireAuth = asyncHandler(async (req, res, next) => {
   if (!user) {
     throw new ApiError(401, "User no longer exists");
   }
+  if (user.isActive === false) {
+    throw new ApiError(403, "Your account has been suspended");
+  }
 
   req.user = user;
   next();

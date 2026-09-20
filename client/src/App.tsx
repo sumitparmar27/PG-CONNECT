@@ -8,7 +8,13 @@ import { MyProperties } from './pages/dashboard/MyProperties'
 import { PgForm } from './pages/dashboard/PgForm'
 import { OwnerEarnings } from './pages/dashboard/OwnerEarnings'
 import { MyBookings } from './pages/MyBookings'
-import { AdminDashboard } from './pages/admin/AdminDashboard'
+import { AdminLayout } from './pages/admin/AdminLayout'
+import { AdminOverview } from './pages/admin/AdminOverview'
+import { AdminUsers } from './pages/admin/AdminUsers'
+import { AdminListings } from './pages/admin/AdminListings'
+import { AdminBookings } from './pages/admin/AdminBookings'
+import { AdminAnalytics } from './pages/admin/AdminAnalytics'
+import { AdminSettings } from './pages/admin/AdminSettings'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AdminRoute } from './components/AdminRoute'
 import { MainLayout } from './layouts/MainLayout'
@@ -30,8 +36,15 @@ function App() {
           <Route path="/dashboard/bookings" element={<MyBookings />} />
           <Route path="/dashboard/earnings" element={<OwnerEarnings />} />
         </Route>
-        <Route element={<AdminRoute />}>
-          <Route path="/admin" element={<AdminDashboard />} />
+      </Route>
+      <Route element={<AdminRoute />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminOverview />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="listings" element={<AdminListings />} />
+          <Route path="bookings" element={<AdminBookings />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="settings" element={<AdminSettings />} />
         </Route>
       </Route>
     </Routes>

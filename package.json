@@ -12,6 +12,7 @@
     "lint": "oxlint -c client/.oxlintrc.json client/src",
     "types": "tsc --noEmit -p client/tsconfig.json",
     "seed:pg-types": "node scripts/seedPgTypes.js",
+    "seed:roles": "node scripts/seedRoles.js",
     "migrate:pg-moderation": "node scripts/backfillPgModeration.js"
   },
   "dependencies": {
@@ -27,6 +28,7 @@
     "multer": "^2.3.0",
     "razorpay": "^2.9.8",
     "react": "^19.2.7",
+    "react-day-picker": "^10.0.1",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.1",
     "tailwind-merge": "^3.7.0"

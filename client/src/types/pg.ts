@@ -22,6 +22,8 @@ export interface Pg {
   address: string
   pincode: string
   price: number
+  dailyRate?: number
+  weeklyRate?: number
   status: PgStatus
   moderationStatus: ModerationStatus
   description: string
@@ -57,6 +59,7 @@ export interface PgFilters {
 export interface AdminListingFilters {
   status?: ModerationStatus
   page?: number
+  limit?: number
 }
 
 export interface AdminListingListResponse {
@@ -75,9 +78,10 @@ export interface PgFormValues {
   address: string
   pincode: string
   price: string
+  dailyRate: string
+  weeklyRate: string
   status: PgStatus
   description: string
-  rooms: string
   bed: string
   bathroom: string
   kitchen: string

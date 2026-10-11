@@ -1,8 +1,13 @@
 import api from './axios'
 import type { Booking, CreateBookingResponse, OwnerEarningsSummary } from '../types/booking'
 
-export function createBookingRequest(pgId: string): Promise<CreateBookingResponse> {
-  return api.post('/bookings', { pgId }).then((res) => res.data)
+export function createBookingRequest(
+  pgId: string,
+  roomId: string,
+  checkIn: string,
+  checkOut: string,
+): Promise<CreateBookingResponse> {
+  return api.post('/bookings', { pgId, roomId, checkIn, checkOut }).then((res) => res.data)
 }
 
 export function verifyBookingPaymentRequest(

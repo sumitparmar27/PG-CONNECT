@@ -11,7 +11,9 @@ import { MyBookings } from './pages/MyBookings'
 import { AdminLayout } from './pages/admin/AdminLayout'
 import { AdminOverview } from './pages/admin/AdminOverview'
 import { AdminUsers } from './pages/admin/AdminUsers'
+import { AdminRoles } from './pages/admin/AdminRoles'
 import { AdminListings } from './pages/admin/AdminListings'
+import { AdminListingForm } from './pages/admin/AdminListingForm'
 import { AdminBookings } from './pages/admin/AdminBookings'
 import { AdminAnalytics } from './pages/admin/AdminAnalytics'
 import { AdminSettings } from './pages/admin/AdminSettings'
@@ -41,7 +43,10 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminOverview />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="roles" element={<AdminRoles />} />
           <Route path="listings" element={<AdminListings />} />
+          <Route path="listings/new" element={<AdminListingForm />} />
+          <Route path="listings/:id/edit" element={<AdminListingForm />} />
           <Route path="bookings" element={<AdminBookings />} />
           <Route path="analytics" element={<AdminAnalytics />} />
           <Route path="settings" element={<AdminSettings />} />

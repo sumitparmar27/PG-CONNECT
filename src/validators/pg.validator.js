@@ -30,9 +30,18 @@ const pgValidators = [
     .matches(/^\d{4,10}$/)
     .withMessage("Enter a valid pincode"),
   body("price").isFloat({ min: 0 }).withMessage("Price must be a positive number").toFloat(),
+  body("dailyRate")
+    .optional({ checkFalsy: true })
+    .isFloat({ min: 0 })
+    .withMessage("Daily rate must be a positive number")
+    .toFloat(),
+  body("weeklyRate")
+    .optional({ checkFalsy: true })
+    .isFloat({ min: 0 })
+    .withMessage("Weekly rate must be a positive number")
+    .toFloat(),
   body("status").optional().isIn(["available", "not available"]).withMessage("Invalid status"),
   body("description").trim().notEmpty().withMessage("Description is required"),
-  body("rooms").isInt({ min: 0 }).withMessage("Rooms must be 0 or more").toInt(),
   body("bed").isInt({ min: 0 }).withMessage("Beds must be 0 or more").toInt(),
   body("bathroom").isInt({ min: 0 }).withMessage("Bathrooms must be 0 or more").toInt(),
   body("kitchen").isInt({ min: 0 }).withMessage("Kitchen count must be 0 or more").toInt(),

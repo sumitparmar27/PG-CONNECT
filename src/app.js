@@ -5,6 +5,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth.routes");
 const pgRoutes = require("./routes/pg.routes");
 const pgTypeRoutes = require("./routes/pgType.routes");
+const roomRoutes = require("./routes/room.routes");
 const bookingRoutes = require("./routes/booking.routes");
 const webhookRoutes = require("./routes/webhook.routes");
 const adminRoutes = require("./routes/admin.routes");
@@ -24,6 +25,7 @@ app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/pgs", pgRoutes);
 app.use("/api/pg-types", pgTypeRoutes);
+app.use("/api/rooms", roomRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
 

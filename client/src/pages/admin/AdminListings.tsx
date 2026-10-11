@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { isAxiosError } from 'axios'
 import { listListingsForModerationRequest, setListingModerationRequest } from '../../api/admin.api'
 import type { ModerationStatus, Pg } from '../../types/pg'
 import { Pagination } from '../../components/Pagination'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
-import { CheckIcon, ImagePlaceholderIcon, XCircleIcon } from '../../components/icons'
+import { CheckIcon, EditIcon, ImagePlaceholderIcon, PlusIcon, XCircleIcon } from '../../components/icons'
 import { gridErrorClass, statusBadgeClass } from '../../lib/ui'
 import { cn } from '../../lib/utils'
 
@@ -30,6 +30,7 @@ function moderationBadgeVariant(status: ModerationStatus) {
 }
 
 export function AdminListings() {
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const status = (searchParams.get('status') || '') as ModerationStatus | ''
   const page = Number(searchParams.get('page') || 1)
@@ -92,10 +93,22 @@ export function AdminListings() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="m-0 text-[26px]">Listings</h1>
-      <p className="m-0 text-[13.5px] text-text">
-        {total} listing{total === 1 ? '' : 's'}
-      </p>
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h1 className="m-0 text-[26px]">Listings</h1>
+          <p className="m-0 text-[13.5px] text-text">
+            {total} listing{total === 1 ? '' : 's'}
+          </p>
+        </div>
+        <button
+          type="button"
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-[7px] border border-accent-border bg-accent-bg px-3.5 py-2 text-[13px] font-semibold whitespace-nowrap text-accent hover:brightness-105"
+          onClick={() => navigate('/admin/listings/new')}
+        >
+          <PlusIcon width={14} height={14} />
+          Add listing
+        </button>
+      </div>
 
       <div className="flex gap-2">
         {TABS.map((tab) => (
@@ -139,6 +152,14 @@ export function AdminListings() {
               </p>
             </div>
             <div className="flex shrink-0 flex-col gap-2">
+              <button
+                type="button"
+                className={rowBtnClass}
+                onClick={() => navigate(`/admin/listings/${pg._id}/edit`)}
+              >
+                <EditIcon width={14} height={14} />
+                Edit
+              </button>
               {pg.moderationStatus !== 'approved' && (
                 <button
                   type="button"

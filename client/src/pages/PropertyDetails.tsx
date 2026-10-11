@@ -1,15 +1,26 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { isAxiosError } from 'axios'
+import type { DateRange } from 'react-day-picker'
 import { getPgRequest } from '../api/pg.api'
 import { createBookingRequest, verifyBookingPaymentRequest } from '../api/booking.api'
+import { listRoomsForPgRequest } from '../api/room.api'
 import type { Pg } from '../types/pg'
+import type { Room } from '../types/room'
 import { useAuth } from '../hooks/useAuth'
 import { BathIcon, BedIcon, CarIcon, CheckIcon, DoorIcon, PinIcon, SpinnerIcon } from '../components/icons'
+import { BookingDateRangePicker } from '../components/BookingDateRangePicker'
 import { authAlertClass, statusBadgeClass } from '../lib/ui'
 import { cn } from '../lib/utils'
 
 type BookingState = 'idle' | 'processing' | 'success'
+
+function formatDateKey(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
 
 export function PropertyDetails() {
   const { id } = useParams<{ id: string }>()
@@ -21,6 +32,9 @@ export function PropertyDetails() {
   const [loading, setLoading] = useState(true)
   const [bookingState, setBookingState] = useState<BookingState>('idle')
   const [bookingError, setBookingError] = useState('')
+  const [rooms, setRooms] = useState<Room[]>([])
+  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null)
+  const [range, setRange] = useState<DateRange | undefined>(undefined)
 
   useEffect(() => {
     if (!id) return
@@ -29,6 +43,13 @@ export function PropertyDetails() {
       .then((data) => {
         setPg(data.pg)
         setActiveImage(0)
+        listRoomsForPgRequest(data.pg._id)
+          .then((roomData) => {
+            const activeRooms = roomData.rooms.filter((room) => room.status === 'active')
+            setRooms(activeRooms)
+            setSelectedRoomId(activeRooms[0]?._id ?? null)
+          })
+          .catch(() => setRooms([]))
       })
       .catch((err) => {
         const message = isAxiosError(err) ? err.response?.data?.message : undefined
@@ -41,9 +62,10 @@ export function PropertyDetails() {
   if (error || !pg) return <p className="py-20 text-center text-danger">{error || 'Listing not found.'}</p>
 
   const isOwner = user?._id === pg.owner._id
+  const selectedRoom = rooms.find((room) => room._id === selectedRoomId) ?? null
 
   async function handleBookNow() {
-    if (!pg) return
+    if (!pg || !selectedRoomId || !range?.from || !range?.to) return
     if (!user) {
       navigate('/login')
       return
@@ -52,7 +74,12 @@ export function PropertyDetails() {
     setBookingError('')
     setBookingState('processing')
     try {
-      const { booking, razorpayOrder, razorpayKeyId } = await createBookingRequest(pg._id)
+      const { booking, razorpayOrder, razorpayKeyId } = await createBookingRequest(
+        pg._id,
+        selectedRoomId,
+        formatDateKey(range.from),
+        formatDateKey(range.to),
+      )
 
       const checkout = new window.Razorpay({
         key: razorpayKeyId,
@@ -189,9 +216,52 @@ export function PropertyDetails() {
 
         <aside className="sticky top-[90px] flex flex-col gap-4 rounded border border-border bg-code-bg p-5 max-[860px]:static">
           <div className="flex items-baseline gap-1.5">
-            <b className="text-[26px] text-text-h">₹{pg.price.toLocaleString('en-IN')}</b>
-            <span className="text-sm text-text">/ month</span>
+            <b className="text-[26px] text-text-h">
+              ₹{(selectedRoom?.rentPerBed ?? pg.price).toLocaleString('en-IN')}
+            </b>
+            <span className="text-sm text-text">/ bed / month</span>
           </div>
+
+          {bookingState !== 'success' && !isOwner && rooms.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-semibold tracking-[0.04em] text-text uppercase">Choose a room</span>
+              <div className="flex flex-wrap gap-2">
+                {rooms.map((room) => (
+                  <button
+                    key={room._id}
+                    type="button"
+                    className={cn(
+                      'cursor-pointer rounded-sm border px-2.5 py-1.5 text-left text-[12.5px]',
+                      room._id === selectedRoomId
+                        ? 'border-accent-border bg-accent-bg text-accent'
+                        : 'border-border bg-transparent text-text-h',
+                    )}
+                    onClick={() => {
+                      setSelectedRoomId(room._id)
+                      setRange(undefined)
+                    }}
+                  >
+                    <b className="block">{room.roomNumber}</b>
+                    <span>
+                      {room.sharingType} · ₹{room.rentPerBed.toLocaleString('en-IN')}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {bookingState !== 'success' && !isOwner && rooms.length === 0 && (
+            <p className="m-0 text-[13px] text-text">No rooms are available for booking yet.</p>
+          )}
+
+          {bookingState !== 'success' && !isOwner && selectedRoomId && (
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-semibold tracking-[0.04em] text-text uppercase">Check-in / check-out</span>
+              <BookingDateRangePicker roomId={selectedRoomId} range={range} onRangeChange={setRange} />
+            </div>
+          )}
+
           {bookingState === 'success' ? (
             <div className="flex items-start gap-2.5 rounded-[10px] bg-success-bg px-3.5 py-3 text-success">
               <CheckIcon width={18} height={18} />
@@ -207,14 +277,20 @@ export function PropertyDetails() {
               type="button"
               className="flex w-full cursor-pointer items-center justify-center gap-2 rounded border-none bg-accent px-4 py-[13px] text-[15px] font-semibold text-white not-disabled:hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-55"
               onClick={handleBookNow}
-              disabled={pg.status !== 'available' || bookingState === 'processing'}
+              disabled={
+                pg.status !== 'available' ||
+                bookingState === 'processing' ||
+                !selectedRoomId ||
+                !range?.from ||
+                !range?.to
+              }
             >
               {bookingState === 'processing' && <SpinnerIcon width={16} height={16} />}
               {pg.status !== 'available'
                 ? 'Not available'
                 : bookingState === 'processing'
                   ? 'Opening checkout...'
-                  : `Book now — pay ₹${pg.price.toLocaleString('en-IN')}`}
+                  : 'Book now'}
             </button>
           )}
           {bookingError && (

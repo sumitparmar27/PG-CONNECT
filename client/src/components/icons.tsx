@@ -201,6 +201,15 @@ export function ImagePlaceholderIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+export function FileIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" />
+      <path d="M14 3.5V8h4" />
+    </svg>
+  )
+}
+
 export function LogoutIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base(props)}>
@@ -268,6 +277,15 @@ export function GearIcon(props: SVGProps<SVGSVGElement>) {
     <svg {...base(props)}>
       <circle cx="12" cy="12" r="3" />
       <path d="M12 3v2.2M12 18.8V21M21 12h-2.2M5.2 12H3M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6" />
+    </svg>
+  )
+}
+
+export function ShieldIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 3.5 5 6v6c0 4.2 2.9 7.4 7 8.5 4.1-1.1 7-4.3 7-8.5V6l-7-2.5Z" />
+      <path d="m9 12 2 2 4-4.5" />
     </svg>
   )
 }

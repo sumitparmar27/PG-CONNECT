@@ -2,7 +2,7 @@ export interface AdminUser {
   _id: string
   name: string
   email: string
-  role: 'user' | 'admin'
+  role: string
   isActive: boolean
   createdAt: string
 }
@@ -19,4 +19,11 @@ export interface AdminUserFilters {
   role?: string
   status?: 'active' | 'suspended'
   page?: number
+}
+
+export interface CreateUserPayload {
+  name: string
+  email: string
+  password: string
+  role?: string
 }

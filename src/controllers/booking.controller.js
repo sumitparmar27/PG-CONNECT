@@ -12,7 +12,14 @@ function throwIfInvalid(req) {
 
 const create = asyncHandler(async (req, res) => {
   throwIfInvalid(req);
-  const { booking, razorpayOrder } = await bookingService.createBooking(req.user._id, req.body.pgId);
+  const { pgId, roomId, checkIn, checkOut } = req.body;
+  const { booking, razorpayOrder } = await bookingService.createBooking(
+    req.user._id,
+    pgId,
+    roomId,
+    checkIn,
+    checkOut,
+  );
   res.status(201).json({
     booking,
     razorpayOrder: { id: razorpayOrder.id, amount: razorpayOrder.amount, currency: razorpayOrder.currency },

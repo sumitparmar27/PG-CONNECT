@@ -4,7 +4,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError");
 
 function toPublicUser(user) {
-  return { _id: user._id, name: user.name, email: user.email, role: user.role };
+  return { _id: user._id, name: user.name, email: user.email, role: user.role, permissions: user.permissions || [] };
 }
 
 function throwIfInvalid(req) {

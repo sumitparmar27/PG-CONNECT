@@ -11,6 +11,19 @@ function toMediaPaths(files) {
   return { images, video };
 }
 
+function parseUrlArray(value) {
+  if (Array.isArray(value)) return value;
+  if (typeof value === "string" && value.trim()) {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // fall through
+    }
+  }
+  return [];
+}
+
 async function assertPgTypeExists(typeId) {
   const exists = await PgType.exists({ _id: typeId });
   if (!exists) {
@@ -18,7 +31,7 @@ async function assertPgTypeExists(typeId) {
   }
 }
 
-async function createPg(ownerId, data, files) {
+async function createPg(ownerId, data, files, { approve = false } = {}) {
   await assertPgTypeExists(data.type);
 
   const { images, video } = toMediaPaths(files);
@@ -26,7 +39,8 @@ async function createPg(ownerId, data, files) {
     throw new ApiError(422, "At least one image is required");
   }
 
-  return Pg.create({ ...data, images, video, owner: ownerId });
+  const extra = approve ? { moderationStatus: "approved" } : {};
+  return Pg.create({ ...data, images, video, owner: ownerId, ...extra });
 }
 
 async function listPgs({ area, type, minPrice, maxPrice, page, limit }) {
@@ -83,16 +97,46 @@ async function findOwnedPgOrThrow(id, ownerId) {
   return pg;
 }
 
+function mergeMediaUpdates(pg, data, files) {
+  const { images: newImages, video: newVideo } = toMediaPaths(files);
+  const keepImages = parseUrlArray(data.keepImages);
+  const finalImages = [...keepImages, ...newImages];
+
+  if (finalImages.length < 1 || finalImages.length > 6) {
+    throw new ApiError(422, "A listing needs between 1 and 6 images");
+  }
+  pg.images = finalImages;
+
+  if (newVideo) {
+    pg.video = newVideo;
+  } else if (!data.keepVideo) {
+    pg.video = undefined;
+  }
+}
+
 async function updatePg(id, ownerId, data, files) {
   const pg = await findOwnedPgOrThrow(id, ownerId);
   await assertPgTypeExists(data.type);
 
-  const { images, video } = toMediaPaths(files);
-
-  const { moderationStatus, ...safeData } = data;
+  const { moderationStatus, keepImages, keepVideo, ...safeData } = data;
   Object.assign(pg, safeData);
-  if (images.length > 0) pg.images = images;
-  if (video) pg.video = video;
+  mergeMediaUpdates(pg, data, files);
+
+  await pg.save();
+  return pg;
+}
+
+async function adminUpdatePg(id, data, files) {
+  const pg = await Pg.findById(id);
+  if (!pg) {
+    throw new ApiError(404, "PG not found");
+  }
+  await assertPgTypeExists(data.type);
+
+  const { ownerId, moderationStatus, keepImages, keepVideo, ...safeData } = data;
+  Object.assign(pg, safeData);
+  if (ownerId) pg.owner = ownerId;
+  mergeMediaUpdates(pg, data, files);
 
   await pg.save();
   return pg;
@@ -108,7 +152,7 @@ async function listForModeration({ status, page, limit }) {
   if (status) filter.moderationStatus = status;
 
   const pageNum = Math.max(1, page || 1);
-  const perPage = Math.min(24, limit || 10);
+  const perPage = Math.min(100, limit || 10);
 
   const [items, total] = await Promise.all([
     Pg.find(filter)
@@ -140,7 +184,9 @@ module.exports = {
   getPgById,
   listMyPgs,
   updatePg,
+  adminUpdatePg,
   deletePg,
   listForModeration,
   setModerationStatus,
+  findOwnedPgOrThrow,
 };

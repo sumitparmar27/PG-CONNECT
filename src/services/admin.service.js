@@ -1,6 +1,8 @@
 const User = require("../models/User.model");
 const Pg = require("../models/Pg.model");
 const Booking = require("../models/Booking.model");
+const roleService = require("./role.service");
+const { Roles } = require("../enums/roles");
 const ApiError = require("../utils/ApiError");
 
 async function getPlatformStats() {
@@ -52,9 +54,24 @@ async function listUsers({ q, role, status, page, limit }) {
   return { items, total, page: pageNum, pages: Math.max(1, Math.ceil(total / perPage)) };
 }
 
+async function createUser({ name, email, password, role }) {
+  const existing = await User.findOne({ email });
+  if (existing) {
+    throw new ApiError(409, "An account with this email already exists");
+  }
+  const targetRole = role || Roles.USER;
+  if (!(await roleService.roleExists(targetRole))) {
+    throw new ApiError(422, "Unknown role");
+  }
+  return User.create({ name, email, password, role: targetRole });
+}
+
 async function updateUserRole(actingAdminId, userId, role) {
   if (String(userId) === String(actingAdminId)) {
     throw new ApiError(400, "You cannot change your own role");
+  }
+  if (!(await roleService.roleExists(role))) {
+    throw new ApiError(422, "Unknown role");
   }
   const user = await User.findById(userId);
   if (!user) {
@@ -125,6 +142,7 @@ async function getAnalytics() {
 module.exports = {
   getPlatformStats,
   listUsers,
+  createUser,
   updateUserRole,
   setUserActive,
   getAnalytics,

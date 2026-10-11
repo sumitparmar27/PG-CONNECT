@@ -8,6 +8,7 @@ fs.mkdirSync(uploadDir, { recursive: true });
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
+const ID_PROOF_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
@@ -36,4 +37,19 @@ const uploadPgMedia = multer({
   { name: "video", maxCount: 1 },
 ]);
 
+function idProofFileFilter(req, file, cb) {
+  if (file.fieldname === "idProofDocument" && !ID_PROOF_TYPES.includes(file.mimetype)) {
+    return cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE", "ID proof (must be JPEG, PNG, WebP, or PDF)"));
+  }
+  cb(null, true);
+}
+
+const uploadIdProof = multer({
+  storage,
+  fileFilter: idProofFileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 },
+}).single("idProofDocument");
+
 module.exports = uploadPgMedia;
+module.exports.uploadPgMedia = uploadPgMedia;
+module.exports.uploadIdProof = uploadIdProof;

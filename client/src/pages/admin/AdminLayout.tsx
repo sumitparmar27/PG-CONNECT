@@ -7,19 +7,22 @@ import {
   DashboardIcon,
   GearIcon,
   LogoutIcon,
+  ShieldIcon,
   UsersIcon,
 } from '../../components/icons'
 import { siteIconBtnClass } from '../../lib/ui'
 import { cn } from '../../lib/utils'
+import { Permissions } from '../../constants/permissions'
 
 const NAV_ITEMS = [
-  { to: '/admin', label: 'Overview', icon: DashboardIcon, end: true },
-  { to: '/admin/users', label: 'Users', icon: UsersIcon, end: false },
-  { to: '/admin/listings', label: 'Listings', icon: BuildingIcon, end: false },
-  { to: '/admin/bookings', label: 'Bookings', icon: CalendarIcon, end: false },
-  { to: '/admin/analytics', label: 'Analytics', icon: ChartIcon, end: false },
-  { to: '/admin/settings', label: 'Settings', icon: GearIcon, end: false },
-]
+  { to: '/admin', label: 'Overview', icon: DashboardIcon, end: true, permission: null },
+  { to: '/admin/users', label: 'Users', icon: UsersIcon, end: false, permission: Permissions.MANAGE_USERS },
+  { to: '/admin/roles', label: 'Roles', icon: ShieldIcon, end: false, permission: Permissions.MANAGE_ROLES },
+  { to: '/admin/listings', label: 'Listings', icon: BuildingIcon, end: false, permission: Permissions.MANAGE_LISTINGS },
+  { to: '/admin/bookings', label: 'Bookings', icon: CalendarIcon, end: false, permission: Permissions.MANAGE_BOOKINGS },
+  { to: '/admin/analytics', label: 'Analytics', icon: ChartIcon, end: false, permission: Permissions.VIEW_ANALYTICS },
+  { to: '/admin/settings', label: 'Settings', icon: GearIcon, end: false, permission: Permissions.MANAGE_SETTINGS },
+] as const
 
 function adminNavLinkClass({ isActive }: { isActive: boolean }) {
   return cn(
@@ -30,6 +33,8 @@ function adminNavLinkClass({ isActive }: { isActive: boolean }) {
 
 export function AdminLayout() {
   const { user, logout } = useAuth()
+  const permissions = user?.permissions || []
+  const visibleNavItems = NAV_ITEMS.filter((item) => !item.permission || permissions.includes(item.permission))
 
   return (
     <div className="flex min-h-svh text-left">
@@ -38,7 +43,7 @@ export function AdminLayout() {
           <img src="/logo.png" alt="PgConnect" className="block h-12.5 w-auto max-w-full max-[880px]:h-auto max-[880px]:w-9" />
         </Link>
         <nav className="flex flex-col gap-1">
-          {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
+          {visibleNavItems.map(({ to, label, icon: Icon, end }) => (
             <NavLink key={to} to={to} end={end} className={adminNavLinkClass}>
               <Icon width={18} height={18} />
               <span className="max-[880px]:hidden">{label}</span>

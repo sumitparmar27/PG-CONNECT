@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { LogoutIcon, PlusIcon } from '../components/icons'
 import { navLinkClass, siteCtaClass, siteIconBtnClass } from '../lib/ui'
+import { hasAnyAdminAccess } from '../constants/permissions'
 
 export function MainLayout() {
   const { user, logout } = useAuth()
@@ -28,7 +29,7 @@ export function MainLayout() {
               <NavLink to="/dashboard/earnings" className={navLinkClass}>
                 Earnings
               </NavLink>
-              {user.role === 'admin' && (
+              {hasAnyAdminAccess(user.permissions) && (
                 <NavLink to="/admin" className={navLinkClass}>
                   Admin
                 </NavLink>

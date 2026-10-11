@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model");
+const Role = require("../models/Role.model");
 const ApiError = require("../utils/ApiError");
 const asyncHandler = require("../utils/asyncHandler");
 
@@ -25,6 +26,9 @@ const requireAuth = asyncHandler(async (req, res, next) => {
   if (user.isActive === false) {
     throw new ApiError(403, "Your account has been suspended");
   }
+
+  const role = await Role.findOne({ name: user.role });
+  user.permissions = role ? role.permissions : [];
 
   req.user = user;
   next();
